@@ -13,7 +13,6 @@ import (
 
 	"github.com/luxfi/crypto/cb58"
 	"github.com/luxfi/crypto/hashing"
-	"github.com/luxfi/ids/utils"
 )
 
 func TestID(t *testing.T) {
@@ -272,7 +271,9 @@ func TestSortIDs(t *testing.T) {
 		{'W', 'a', 'l', 'l', 'e', ' ', 'l', 'a', 'b', 's'},
 		{'a', 'v', 'a', ' ', 'l', 'a', 'b', 's'},
 	}
-	utils.Sort(ids)
+	slices.SortFunc(ids, func(a, b ID) int {
+		return a.Compare(b)
+	})
 	expected := []ID{
 		{'W', 'a', 'l', 'l', 'e', ' ', 'l', 'a', 'b', 's'},
 		{'a', 'v', 'a', ' ', 'l', 'a', 'b', 's'},
