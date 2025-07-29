@@ -176,3 +176,18 @@ func (id ID) MarshalText() ([]byte, error) {
 func (id ID) Compare(other ID) int {
 	return bytes.Compare(id[:], other[:])
 }
+
+// IsZero returns true if the ID is all zeros
+func (id ID) IsZero() bool {
+	return id == Empty
+}
+
+// GenerateNodeIDFromBytes generates a node ID from bytes
+func GenerateNodeIDFromBytes(bytes []byte) ID {
+	return hashing.ComputeHash256Array(bytes)
+}
+
+// Checksum256 computes SHA256 checksum and returns an ID
+func Checksum256(data []byte) ID {
+	return hashing.ComputeHash256Array(data)
+}
