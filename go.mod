@@ -3,7 +3,7 @@ module github.com/luxfi/ids
 go 1.24.5
 
 require (
-	github.com/luxfi/crypto v0.1.0
+	github.com/luxfi/crypto v0.1.1
 	github.com/stretchr/testify v1.10.0
 )
 
