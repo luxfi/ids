@@ -6,7 +6,6 @@ package ids
 import "crypto"
 
 // Certificate represents a TLS certificate
-// This is a minimal representation needed for NodeID generation
 type Certificate struct {
 	// Raw contains the complete ASN.1 DER content of the certificate
 	Raw []byte

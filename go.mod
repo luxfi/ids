@@ -1,9 +1,9 @@
 module github.com/luxfi/ids
 
-go 1.24.5
+go 1.22
 
 require (
-	github.com/luxfi/crypto v1.1.1
+	github.com/luxfi/crypto v1.2.9
 	github.com/mr-tron/base58 v1.2.0
 	github.com/stretchr/testify v1.10.0
 )

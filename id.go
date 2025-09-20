@@ -182,6 +182,13 @@ func (id ID) Hex() string {
 	return hex.EncodeToString(id[:])
 }
 
+// ToShortID converts this ID to a ShortID by taking the first 20 bytes
+func (id ID) ToShortID() ShortID {
+	var shortID ShortID
+	copy(shortID[:], id[:ShortIDLen])
+	return shortID
+}
+
 func (id ID) String() string {
 	// We assume that the maximum size of a byte slice that
 	// can be stringified is at least the length of an ID
