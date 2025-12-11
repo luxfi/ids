@@ -40,6 +40,11 @@ func ToID(bytes []byte) (ID, error) {
 
 // FromString is the inverse of ID.String()
 func FromString(idStr string) (ID, error) {
+	// Check if this is a well-known native chain string
+	if id, ok := NativeChainFromString(idStr); ok {
+		return id, nil
+	}
+
 	bytes, err := cb58.Decode(idStr)
 	if err != nil {
 		return ID{}, err
@@ -49,6 +54,11 @@ func FromString(idStr string) (ID, error) {
 
 // FromStringWithForce is like FromString but can force ignore checksum errors
 func FromStringWithForce(idStr string, forceIgnoreChecksum bool) (ID, error) {
+	// Check if this is a well-known native chain string
+	if id, ok := NativeChainFromString(idStr); ok {
+		return id, nil
+	}
+
 	bytes, err := cb58.Decode(idStr)
 	if err != nil {
 		// If force flag is set and it's a checksum error, try raw base58 decode
@@ -76,6 +86,11 @@ func FromStringOrPanic(idStr string) ID {
 }
 
 func (id ID) MarshalJSON() ([]byte, error) {
+	// Check if this is a well-known native chain ID
+	if nativeStr := NativeChainString(id); nativeStr != "" {
+		return []byte(`"` + nativeStr + `"`), nil
+	}
+
 	str, err := cb58.Encode(id[:])
 	if err != nil {
 		return nil, err
@@ -100,6 +115,12 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 	innerStr := str[1:lastIndex]
 	if innerStr == "" {
 		*id = Empty
+		return nil
+	}
+
+	// Check if this is a well-known native chain string
+	if nativeID, ok := NativeChainFromString(innerStr); ok {
+		*id = nativeID
 		return nil
 	}
 
@@ -197,6 +218,11 @@ func (id ID) ToShortID() ShortID {
 }
 
 func (id ID) String() string {
+	// Check if this is a well-known native chain ID
+	if nativeStr := NativeChainString(id); nativeStr != "" {
+		return nativeStr
+	}
+
 	// We assume that the maximum size of a byte slice that
 	// can be stringified is at least the length of an ID
 	s, _ := cb58.Encode(id[:])
