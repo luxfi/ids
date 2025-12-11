@@ -17,9 +17,9 @@ package ids
 //   B-Chain: 11111111111111111111111111111111B (Bridge)
 //   T-Chain: 11111111111111111111111111111111T (Threshold)
 //   Z-Chain: 11111111111111111111111111111111Z (Zero-knowledge)
-//   G-Chain: 11111111111111111111111111111111G (Governance) - COMING SOON
+//   G-Chain: 11111111111111111111111111111111G (Graph/dgraph) - COMING SOON
 //   I-Chain: 11111111111111111111111111111111I (Identity) - COMING SOON
-//   K-Chain: 11111111111111111111111111111111K (Knowledge) - COMING SOON
+//   K-Chain: 11111111111111111111111111111111K (KMS) - COMING SOON
 //
 // The string representation is for display only - internally these use
 // standard 32-byte IDs with the distinguishing byte at position 31.
@@ -74,13 +74,13 @@ var (
 	// ZChainID is the well-known Z-Chain (Zero-knowledge) ID
 	ZChainID ID
 
-	// GChainID is the well-known G-Chain (Governance) ID - COMING SOON
+	// GChainID is the well-known G-Chain (Graph/dgraph) ID - COMING SOON
 	GChainID ID
 
 	// IChainID is the well-known I-Chain (Identity) ID - COMING SOON
 	IChainID ID
 
-	// KChainID is the well-known K-Chain (Knowledge) ID - COMING SOON
+	// KChainID is the well-known K-Chain (KMS) ID - COMING SOON
 	KChainID ID
 )
 
