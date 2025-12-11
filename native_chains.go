@@ -16,6 +16,10 @@ package ids
 //   A-Chain: 11111111111111111111111111111111A (AI)
 //   B-Chain: 11111111111111111111111111111111B (Bridge)
 //   T-Chain: 11111111111111111111111111111111T (Threshold)
+//   Z-Chain: 11111111111111111111111111111111Z (Zero-knowledge)
+//   G-Chain: 11111111111111111111111111111111G (Governance) - COMING SOON
+//   I-Chain: 11111111111111111111111111111111I (Identity) - COMING SOON
+//   K-Chain: 11111111111111111111111111111111K (Knowledge) - COMING SOON
 //
 // The string representation is for display only - internally these use
 // standard 32-byte IDs with the distinguishing byte at position 31.
@@ -39,6 +43,10 @@ const (
 	AChainIDStr = nativeChainPrefix + "A"
 	BChainIDStr = nativeChainPrefix + "B"
 	TChainIDStr = nativeChainPrefix + "T"
+	ZChainIDStr = nativeChainPrefix + "Z"
+	GChainIDStr = nativeChainPrefix + "G" // Coming soon
+	IChainIDStr = nativeChainPrefix + "I" // Coming soon
+	KChainIDStr = nativeChainPrefix + "K" // Coming soon
 )
 
 var (
@@ -62,6 +70,18 @@ var (
 
 	// TChainID is the well-known T-Chain (Threshold) ID
 	TChainID ID
+
+	// ZChainID is the well-known Z-Chain (Zero-knowledge) ID
+	ZChainID ID
+
+	// GChainID is the well-known G-Chain (Governance) ID - COMING SOON
+	GChainID ID
+
+	// IChainID is the well-known I-Chain (Identity) ID - COMING SOON
+	IChainID ID
+
+	// KChainID is the well-known K-Chain (Knowledge) ID - COMING SOON
+	KChainID ID
 )
 
 func init() {
@@ -73,6 +93,10 @@ func init() {
 	AChainID[nativeChainLetterPos] = 'A'
 	BChainID[nativeChainLetterPos] = 'B'
 	TChainID[nativeChainLetterPos] = 'T'
+	ZChainID[nativeChainLetterPos] = 'Z'
+	GChainID[nativeChainLetterPos] = 'G'
+	IChainID[nativeChainLetterPos] = 'I'
+	KChainID[nativeChainLetterPos] = 'K'
 }
 
 // NativeChainString returns the human-friendly string for a native chain ID.
@@ -111,6 +135,14 @@ func NativeChainString(id ID) string {
 		return BChainIDStr
 	case 'T':
 		return TChainIDStr
+	case 'Z':
+		return ZChainIDStr
+	case 'G':
+		return GChainIDStr
+	case 'I':
+		return IChainIDStr
+	case 'K':
+		return KChainIDStr
 	case 0:
 		// All zeros = Empty ID, not a native chain (handled separately)
 		return ""
@@ -150,6 +182,14 @@ func NativeChainFromString(s string) (ID, bool) {
 			return BChainID, true
 		case 'T', 't':
 			return TChainID, true
+		case 'Z', 'z':
+			return ZChainID, true
+		case 'G', 'g':
+			return GChainID, true
+		case 'I', 'i':
+			return IChainID, true
+		case 'K', 'k':
+			return KChainID, true
 		}
 		return Empty, false
 	}
@@ -180,11 +220,19 @@ func NativeChainFromString(s string) (ID, bool) {
 		return BChainID, true
 	case 'T':
 		return TChainID, true
+	case 'Z':
+		return ZChainID, true
+	case 'G':
+		return GChainID, true
+	case 'I':
+		return IChainID, true
+	case 'K':
+		return KChainID, true
 	}
 	return Empty, false
 }
 
-// NativeChainAlias returns the single-letter alias for a native chain (P, C, X, Q, A, B, T).
+// NativeChainAlias returns the single-letter alias for a native chain (P, C, X, Q, A, B, T, Z, G, I, K).
 // Returns empty string if not a native chain.
 //
 //go:inline
@@ -197,7 +245,7 @@ func NativeChainAlias(id ID) string {
 
 // AllNativeChainIDs returns all well-known native chain IDs.
 func AllNativeChainIDs() []ID {
-	return []ID{PChainID, CChainID, XChainID, QChainID, AChainID, BChainID, TChainID}
+	return []ID{PChainID, CChainID, XChainID, QChainID, AChainID, BChainID, TChainID, ZChainID, GChainID, IChainID, KChainID}
 }
 
 // NativeChainIDFromLetter returns the chain ID for a given letter.
@@ -220,6 +268,14 @@ func NativeChainIDFromLetter(letter byte) (ID, bool) {
 		return BChainID, true
 	case 'T', 't':
 		return TChainID, true
+	case 'Z', 'z':
+		return ZChainID, true
+	case 'G', 'g':
+		return GChainID, true
+	case 'I', 'i':
+		return IChainID, true
+	case 'K', 'k':
+		return KChainID, true
 	}
 	return Empty, false
 }
