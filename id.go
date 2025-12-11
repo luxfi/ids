@@ -96,8 +96,15 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 		return errMissingQuotes
 	}
 
+	// Handle empty string - treat as zero ID
+	innerStr := str[1:lastIndex]
+	if innerStr == "" {
+		*id = Empty
+		return nil
+	}
+
 	// Parse CB58 formatted string to bytes
-	bytes, err := cb58.Decode(str[1:lastIndex])
+	bytes, err := cb58.Decode(innerStr)
 	if err != nil {
 		return fmt.Errorf("couldn't decode ID to bytes: %w", err)
 	}
