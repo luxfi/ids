@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/luxfi/crypto/hashing"
+	"github.com/luxfi/crypto/hash"
 	"github.com/luxfi/ids/utils"
 )
 
@@ -76,8 +76,8 @@ func ToNodeID(bytes []byte) (NodeID, error) {
 }
 
 func NodeIDFromCert(cert *Certificate) NodeID {
-	return hashing.ComputeHash160Array(
-		hashing.ComputeHash256(cert.Raw),
+	return hash.ComputeHash160Array(
+		hash.ComputeHash256(cert.Raw),
 	)
 }
 

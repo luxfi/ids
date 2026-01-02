@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/luxfi/crypto/cb58"
-	"github.com/luxfi/crypto/hashing"
+	"github.com/luxfi/crypto/hash"
 	"github.com/luxfi/ids/utils"
 )
 
@@ -28,7 +28,7 @@ type ShortID [ShortIDLen]byte
 
 // ToShortID attempt to convert a byte slice into an id
 func ToShortID(bytes []byte) (ShortID, error) {
-	return hashing.ToHash160(bytes)
+	return hash.ToHash160(bytes)
 }
 
 // ShortFromString is the inverse of ShortID.String()
