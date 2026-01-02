@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/luxfi/crypto/cb58"
-	"github.com/luxfi/crypto/hashing"
+	"github.com/luxfi/crypto/hash"
 	"github.com/luxfi/ids/utils"
 	"github.com/luxfi/ids/utils/wrappers"
 	"github.com/mr-tron/base58/base58"
@@ -35,7 +35,7 @@ type ID [IDLen]byte
 
 // ToID attempt to convert a byte slice into an id
 func ToID(bytes []byte) (ID, error) {
-	return hashing.ToHash256(bytes)
+	return hash.ToHash256(bytes)
 }
 
 // FromString is the inverse of ID.String()
@@ -152,7 +152,7 @@ func (id ID) Prefix(prefixes ...uint64) ID {
 	}
 	packer.PackFixedBytes(id[:])
 
-	return hashing.ComputeHash256Array(packer.Bytes)
+	return hash.ComputeHash256Array(packer.Bytes)
 }
 
 // Append this id with the provided suffixes and re-hash the result. This
@@ -171,7 +171,7 @@ func (id ID) Append(suffixes ...uint32) ID {
 		packer.PackInt(suffix)
 	}
 
-	return hashing.ComputeHash256Array(packer.Bytes)
+	return hash.ComputeHash256Array(packer.Bytes)
 }
 
 // XOR this id and the provided id and return the resulting id.
@@ -244,10 +244,10 @@ func (id ID) IsZero() bool {
 
 // GenerateNodeIDFromBytes generates a node ID from bytes
 func GenerateNodeIDFromBytes(bytes []byte) ID {
-	return hashing.ComputeHash256Array(bytes)
+	return hash.ComputeHash256Array(bytes)
 }
 
 // Checksum256 computes SHA256 checksum and returns an ID
 func Checksum256(data []byte) ID {
-	return hashing.ComputeHash256Array(data)
+	return hash.ComputeHash256Array(data)
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/luxfi/crypto/cb58"
-	"github.com/luxfi/crypto/hashing"
+	"github.com/luxfi/crypto/hash"
 )
 
 func TestID(t *testing.T) {
@@ -62,7 +62,7 @@ func TestIDPrefix(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			expected := ID(hashing.ComputeHash256Array(test.expectedPreimage))
+			expected := ID(hash.ComputeHash256Array(test.expectedPreimage))
 			require.Equal(t, expected, test.id.Prefix(test.prefix...))
 		})
 	}
@@ -104,7 +104,7 @@ func TestIDAppend(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			expected := ID(hashing.ComputeHash256Array(test.expectedPreimage))
+			expected := ID(hash.ComputeHash256Array(test.expectedPreimage))
 			require.Equal(t, expected, test.id.Append(test.suffix...))
 		})
 	}
