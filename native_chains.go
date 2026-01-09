@@ -45,6 +45,7 @@ const (
 	TChainIDStr = nativeChainPrefix + "T"
 	ZChainIDStr = nativeChainPrefix + "Z"
 	GChainIDStr = nativeChainPrefix + "G" // Coming soon
+	IChainIDStr = nativeChainPrefix + "I" // Identity - Coming soon
 	KChainIDStr = nativeChainPrefix + "K" // Coming soon
 	DChainIDStr = nativeChainPrefix + "D"
 )
@@ -77,6 +78,9 @@ var (
 	// GChainID is the well-known G-Chain (Graph/dgraph) ID - COMING SOON
 	GChainID ID
 
+	// IChainID is the well-known I-Chain (Identity) ID - COMING SOON
+	IChainID ID
+
 	// KChainID is the well-known K-Chain (KMS) ID - COMING SOON
 	KChainID ID
 
@@ -95,6 +99,7 @@ func init() {
 	TChainID[nativeChainLetterPos] = 'T'
 	ZChainID[nativeChainLetterPos] = 'Z'
 	GChainID[nativeChainLetterPos] = 'G'
+	IChainID[nativeChainLetterPos] = 'I'
 	KChainID[nativeChainLetterPos] = 'K'
 	DChainID[nativeChainLetterPos] = 'D'
 }
@@ -139,6 +144,8 @@ func NativeChainString(id ID) string {
 		return ZChainIDStr
 	case 'G':
 		return GChainIDStr
+	case 'I':
+		return IChainIDStr
 	case 'K':
 		return KChainIDStr
 	case 'D':
@@ -186,6 +193,8 @@ func NativeChainFromString(s string) (ID, bool) {
 			return ZChainID, true
 		case 'G', 'g':
 			return GChainID, true
+		case 'I', 'i':
+			return IChainID, true
 		case 'K', 'k':
 			return KChainID, true
 		case 'D', 'd':
@@ -224,6 +233,8 @@ func NativeChainFromString(s string) (ID, bool) {
 		return ZChainID, true
 	case 'G':
 		return GChainID, true
+	case 'I':
+		return IChainID, true
 	case 'K':
 		return KChainID, true
 	case 'D':
@@ -245,7 +256,7 @@ func NativeChainAlias(id ID) string {
 
 // AllNativeChainIDs returns all well-known native chain IDs.
 func AllNativeChainIDs() []ID {
-	return []ID{PChainID, CChainID, XChainID, QChainID, AChainID, BChainID, TChainID, ZChainID, GChainID, KChainID, DChainID}
+	return []ID{PChainID, CChainID, XChainID, QChainID, AChainID, BChainID, TChainID, ZChainID, GChainID, IChainID, KChainID, DChainID}
 }
 
 // NativeChainIDFromLetter returns the chain ID for a given letter.
@@ -272,6 +283,8 @@ func NativeChainIDFromLetter(letter byte) (ID, bool) {
 		return ZChainID, true
 	case 'G', 'g':
 		return GChainID, true
+	case 'I', 'i':
+		return IChainID, true
 	case 'K', 'k':
 		return KChainID, true
 	case 'D', 'd':
