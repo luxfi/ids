@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"github.com/luxfi/crypto/hash"
-	"github.com/luxfi/ids/utils"
 )
 
 const (
@@ -22,7 +21,7 @@ var (
 
 	errShortNodeID = errors.New("insufficient NodeID length")
 
-	_ utils.Sortable[NodeID] = NodeID{}
+	_ Sortable[NodeID] = NodeID{}
 )
 
 type NodeID ShortID
@@ -88,4 +87,18 @@ func NodeIDFromString(nodeIDStr string) (NodeID, error) {
 		return NodeID{}, err
 	}
 	return NodeID(asShort), nil
+}
+
+// NodeIDPrefix for ML-DSA derived NodeIDs
+const NodeIDMLDSADomainPrefix = "LuxNodeID/v1"
+
+// NodeIDFromMLDSA derives a NodeID from an ML-DSA public key.
+// This provides post-quantum secure node identity following FIPS 204.
+// NodeID = H("LuxNodeID/v1" || mldsa_pubkey_bytes)
+func NodeIDFromMLDSA(mldsaPubKey []byte) NodeID {
+	prefix := []byte(NodeIDMLDSADomainPrefix)
+	data := make([]byte, len(prefix)+len(mldsaPubKey))
+	copy(data, prefix)
+	copy(data[len(prefix):], mldsaPubKey)
+	return hash.ComputeHash160Array(hash.ComputeHash256(data))
 }

@@ -9,12 +9,16 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/luxfi/codec/wrappers"
 	"github.com/luxfi/crypto/cb58"
 	"github.com/luxfi/crypto/hash"
-	"github.com/luxfi/ids/utils"
-	"github.com/luxfi/ids/utils/wrappers"
 	"github.com/mr-tron/base58/base58"
 )
+
+// Sortable is the interface for types that can be compared for ordering.
+type Sortable[T any] interface {
+	Compare(T) int
+}
 
 const (
 	IDLen   = 32
@@ -27,7 +31,7 @@ var (
 
 	errMissingQuotes = errors.New("first and last characters should be quotes")
 
-	_ utils.Sortable[ID] = ID{}
+	_ Sortable[ID] = ID{}
 )
 
 // ID wraps a 32 byte hash used as an identifier

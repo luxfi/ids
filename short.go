@@ -11,7 +11,6 @@ import (
 
 	"github.com/luxfi/crypto/cb58"
 	"github.com/luxfi/crypto/hash"
-	"github.com/luxfi/ids/utils"
 )
 
 const ShortIDLen = 20
@@ -20,7 +19,7 @@ const ShortIDLen = 20
 var (
 	ShortEmpty = ShortID{}
 
-	_ utils.Sortable[ShortID] = ShortID{}
+	_ Sortable[ShortID] = ShortID{}
 )
 
 // ShortID wraps a 20 byte hash as an identifier
