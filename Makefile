@@ -4,7 +4,7 @@
 
 # Variables
 GOBIN := $(shell go env GOPATH)/bin
-GOLANGCI_LINT_VERSION := v1.54.2
+GOLANGCI_LINT_VERSION := v2.1.6
 COVERAGE_FILE := coverage.out
 COVERAGE_HTML := coverage.html
 
@@ -42,7 +42,7 @@ lint: install-tools
 # Install development tools
 install-tools:
 	@echo "Installing development tools..."
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 # Clean build artifacts
 clean:
