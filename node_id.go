@@ -89,12 +89,22 @@ func NodeIDFromString(nodeIDStr string) (NodeID, error) {
 	return NodeID(asShort), nil
 }
 
-// NodeIDPrefix for ML-DSA derived NodeIDs
+// NodeIDPrefix for the legacy ML-DSA NodeID derivation. Retained for
+// backwards compatibility with chains that registered validators under the
+// pre-v1 derivation; new strict-PQ chains use the canonical SHAKE256-384
+// derivation in node_id_scheme.go (NodeIDScheme.DeriveMLDSA), which
+// domain-separates by chain id AND scheme byte and produces a 48-byte
+// commitment whose 20-byte prefix is the NodeID.
 const NodeIDMLDSADomainPrefix = "LuxNodeID/v1"
 
-// NodeIDFromMLDSA derives a NodeID from an ML-DSA public key.
-// This provides post-quantum secure node identity following FIPS 204.
-// NodeID = H("LuxNodeID/v1" || mldsa_pubkey_bytes)
+// NodeIDFromMLDSA derives a 20-byte NodeID from an ML-DSA public key
+// using the legacy (pre-chain-binding) derivation. Kept stable for
+// existing call sites; new strict-PQ chains MUST use
+// NodeIDScheme.DeriveMLDSA or TypedNodeIDFromMLDSA, which bind the
+// chain id and scheme byte into the digest and return the full
+// 48-byte SHAKE256-384 commitment alongside the truncated NodeID.
+//
+// NodeID = RIPEMD160(SHA256("LuxNodeID/v1" || mldsa_pubkey_bytes))
 func NodeIDFromMLDSA(mldsaPubKey []byte) NodeID {
 	prefix := []byte(NodeIDMLDSADomainPrefix)
 	data := make([]byte, len(prefix)+len(mldsaPubKey))
