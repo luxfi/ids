@@ -52,6 +52,30 @@ go build ./...
 go test -v ./...
 ```
 
+## NodeIDScheme — wire-discriminated NodeID derivation
+
+`node_id_scheme.go` owns the strict-PQ NodeID surface introduced in v1.2.10:
+
+- `NodeIDScheme` enum: `MLDSA65=0x42` (canonical strict-PQ),
+  `MLDSA87=0x43` (high-value), `Secp256k1=0x90`
+  (CLASSICAL_COMPAT_UNSAFE only). Bytes mirror the consensus
+  `SigSchemeID` enum so transcripts read the same in both packages.
+- `NodeIDScheme.DeriveMLDSA(chainID, pubKey) (NodeID, FullDigest, error)`:
+  derives a 48-byte SHAKE256-384 commitment under SP 800-185
+  left_encode framing of `("LUX_NODE_ID_V1" || chainID || scheme ||
+  pubkey)`. NodeID is `FullDigest[:20]` for storage/map-key use;
+  `FullDigest` (48 bytes) is what handshake transcripts and validator
+  set roots bind.
+- `TypedNodeID = {Scheme, NodeID}` is the wire form: one scheme byte
+  followed by the 20-byte NodeID. `ParseTypedNodeID` / `Bytes` are the
+  wire codec; `ErrTypedNodeIDLen` / `ErrNodeIDSchemeUnknown` /
+  `ErrNodeIDSchemeMismatch` are the typed gate errors.
+
+The 20-byte `NodeID` array stays byte-identical for storage and map
+keys; the scheme byte travels alongside it on the wire. Strict-PQ
+chains derive their 20-byte NodeID from `SHAKE256-384(...)[:20]`;
+classical chains keep their RIPEMD160 derivation via `NodeIDFromCert`.
+
 ## Integration with Lux Ecosystem
 
 This package is part of the Lux blockchain ecosystem. See the main documentation at:
