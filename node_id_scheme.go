@@ -13,7 +13,7 @@
 // Derivation surface:
 //
 //	strict-PQ (ML-DSA-65 / ML-DSA-87):
-//	  digest    = SHAKE256-384("LUX_NODE_ID_V1" || chain_id || scheme || pubkey)
+//	  digest    = SHAKE256-384("NODE_ID_V1" || chain_id || scheme || pubkey)
 //	  NodeID    = digest[:20]                               (storage / map key)
 //	  FullDigest = digest                                   (handshake transcript)
 //
@@ -125,7 +125,7 @@ func (s NodeIDScheme) IsKnown() bool {
 // SHAKE256-384 derivation. Pinned at "v1"; bumping the string invalidates
 // every prior derivation, which is the correct behaviour for a hardfork of
 // the derivation encoding.
-const nodeIDDomainPrefix = "LUX_NODE_ID_V1"
+const nodeIDDomainPrefix = "NODE_ID_V1"
 
 // FullDigestLen is the byte length of the canonical NodeID full digest
 // (SHAKE256-384). The 20-byte NodeID is the prefix of this digest; the
@@ -142,7 +142,7 @@ type FullDigest [FullDigestLen]byte
 // DeriveMLDSA returns the 48-byte SHAKE256-384 digest and matching 20-byte
 // NodeID for an ML-DSA public key under the supplied chain id.
 //
-//	digest = SHAKE256-384(left_encode(len)||"LUX_NODE_ID_V1" ||
+//	digest = SHAKE256-384(left_encode(len)||"NODE_ID_V1" ||
 //	                       chain_id || {scheme} || pubkey)
 //	NodeID = digest[:20]
 //
