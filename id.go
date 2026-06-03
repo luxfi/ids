@@ -137,8 +137,34 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// UnmarshalText decodes an unquoted CB58/native ID string. It is the inverse
+// of MarshalText, which returns the unquoted id.String(). Used by Go's
+// encoding/json when ID appears as a map key (json decodes map keys via
+// TextUnmarshaler, not via JSON), as well as by encoding/xml, flag.Value,
+// and any other TextUnmarshaler consumer.
+//
+// Historical note: this previously delegated to UnmarshalJSON, which
+// required the input to be quoted. That broke json.Unmarshal of any
+// map[ids.ID]V because the stdlib passes UNQUOTED keys to UnmarshalText
+// (TextUnmarshaler contract). The asymmetry surfaced as
+// "first and last characters should be quotes" on
+// --chain-aliases-file and --chain-aliases-file-content inputs.
 func (id *ID) UnmarshalText(text []byte) error {
-	return id.UnmarshalJSON(text)
+	str := string(text)
+	if str == nullStr || str == "" {
+		*id = Empty
+		return nil
+	}
+	if nativeID, ok := NativeChainFromString(str); ok {
+		*id = nativeID
+		return nil
+	}
+	bytes, err := cb58.Decode(str)
+	if err != nil {
+		return fmt.Errorf("couldn't decode ID to bytes: %w", err)
+	}
+	*id, err = ToID(bytes)
+	return err
 }
 
 // Prefix this id to create a more selective id. This can be used to store

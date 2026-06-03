@@ -249,6 +249,59 @@ func TestIDHex(t *testing.T) {
 	require.Equal(t, expected, id.Hex())
 }
 
+// TestIDUnmarshalText covers the unquoted CB58 path that
+// encoding/json invokes for map keys. Regression: the previous
+// implementation delegated to UnmarshalJSON and rejected unquoted input
+// with errMissingQuotes, so json.Unmarshal of any map[ids.ID]V failed
+// even for byte-identical content that worked in struct fields.
+func TestIDUnmarshalText(t *testing.T) {
+	tests := []struct {
+		label string
+		in    string
+		out   ID
+	}{
+		{
+			"empty -> Empty",
+			"",
+			Empty,
+		},
+		{
+			"null -> Empty",
+			"null",
+			Empty,
+		},
+		{
+			"unquoted CB58",
+			"jvYi6Tn9idMi7BaymUVi9zWjg5tpmW7trfKG1AYJLKZJ2fsU7",
+			ID{'a', 'v', 'a', ' ', 'l', 'a', 'b', 's'},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.label, func(t *testing.T) {
+			require := require.New(t)
+			var got ID
+			require.NoError(got.UnmarshalText([]byte(tt.in)))
+			require.Equal(tt.out, got)
+		})
+	}
+}
+
+// TestIDMapKeyJSONRoundTrip is the actual production scenario:
+// map[ids.ID][]string used by luxd's chain-aliases parser. Both
+// directions must succeed against the same Go encoding/json runtime.
+func TestIDMapKeyJSONRoundTrip(t *testing.T) {
+	require := require.New(t)
+	id := ID{'a', 'v', 'a', ' ', 'l', 'a', 'b', 's'}
+	in := map[ID][]string{id: {"hanzo", "h"}}
+
+	enc, err := json.Marshal(in)
+	require.NoError(err)
+
+	var out map[ID][]string
+	require.NoError(json.Unmarshal(enc, &out))
+	require.Equal(in, out)
+}
+
 func TestIDString(t *testing.T) {
 	tests := []struct {
 		label    string
