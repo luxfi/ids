@@ -5,14 +5,21 @@ package ids
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
 
-	"github.com/luxfi/codec/wrappers"
 	"github.com/luxfi/crypto/cb58"
 	"github.com/luxfi/crypto/hash"
 	"github.com/mr-tron/base58/base58"
+)
+
+const (
+	// uint32Len is the byte length of a big-endian-packed uint32.
+	uint32Len = 4
+	// uint64Len is the byte length of a big-endian-packed uint64.
+	uint64Len = 8
 )
 
 // Sortable is the interface for types that can be compared for ordering.
@@ -172,17 +179,19 @@ func (id *ID) UnmarshalText(text []byte) error {
 // prefix1(id) -> confidence
 // prefix2(id) -> vertex
 // This will return a new id and not modify the original id.
+//
+// Wire format (byte-for-byte equal to the historical
+// codec/wrappers.Packer encoding): prefix0 || prefix1 || ... || id, each
+// prefix big-endian uint64, id raw 32-byte fixed bytes.
 func (id ID) Prefix(prefixes ...uint64) ID {
-	packer := wrappers.Packer{
-		Bytes: make([]byte, len(prefixes)*wrappers.LongLen+IDLen),
-	}
-
+	buf := make([]byte, len(prefixes)*uint64Len+IDLen)
+	off := 0
 	for _, prefix := range prefixes {
-		packer.PackLong(prefix)
+		binary.BigEndian.PutUint64(buf[off:], prefix)
+		off += uint64Len
 	}
-	packer.PackFixedBytes(id[:])
-
-	return hash.ComputeHash256Array(packer.Bytes)
+	copy(buf[off:], id[:])
+	return hash.ComputeHash256Array(buf)
 }
 
 // Append this id with the provided suffixes and re-hash the result. This
@@ -191,17 +200,19 @@ func (id ID) Prefix(prefixes ...uint64) ID {
 // This is used to generate LP-77 validationIDs.
 //
 // Ref: https://github.com/luxfi/LPs/tree/e333b335c34c8692d84259d21bd07b2bb849dc2c/LPs/77-reinventing-subnets#convertsubnettol1tx
+//
+// Wire format (byte-for-byte equal to the historical
+// codec/wrappers.Packer encoding): id || suffix0 || suffix1 || ..., id raw
+// 32-byte fixed bytes, each suffix big-endian uint32.
 func (id ID) Append(suffixes ...uint32) ID {
-	packer := wrappers.Packer{
-		Bytes: make([]byte, IDLen+len(suffixes)*wrappers.IntLen),
-	}
-
-	packer.PackFixedBytes(id[:])
+	buf := make([]byte, IDLen+len(suffixes)*uint32Len)
+	copy(buf, id[:])
+	off := IDLen
 	for _, suffix := range suffixes {
-		packer.PackInt(suffix)
+		binary.BigEndian.PutUint32(buf[off:], suffix)
+		off += uint32Len
 	}
-
-	return hash.ComputeHash256Array(packer.Bytes)
+	return hash.ComputeHash256Array(buf)
 }
 
 // XOR this id and the provided id and return the resulting id.
