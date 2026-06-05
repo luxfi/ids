@@ -3,7 +3,6 @@ module github.com/luxfi/ids
 go 1.26.3
 
 require (
-	github.com/luxfi/codec v1.1.4
 	github.com/luxfi/crypto v1.19.0
 	github.com/mr-tron/base58 v1.2.0
 	github.com/stretchr/testify v1.11.1
