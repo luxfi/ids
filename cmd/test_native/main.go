@@ -23,7 +23,8 @@ func main() {
 		{"Q-Chain", ids.QChainID},
 		{"A-Chain", ids.AChainID},
 		{"B-Chain", ids.BChainID},
-		{"T-Chain", ids.TChainID},
+		{"M-Chain", ids.MChainID},
+		{"F-Chain", ids.FChainID},
 	}
 
 	fmt.Println("1. Native Chain ID String representations:")
