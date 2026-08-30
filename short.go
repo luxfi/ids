@@ -56,30 +56,36 @@ func (id ShortID) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + str + `"`), nil
 }
 
+// UnmarshalJSON reads the same cb58 word, quoted. The reading itself is in
+// UnmarshalText and is not written twice.
 func (id *ShortID) UnmarshalJSON(b []byte) error {
 	str := string(b)
 	if str == nullStr { // If "null", do nothing
 		return nil
-	} else if len(str) < 2 {
+	}
+	if len(str) < 2 || str[0] != '"' || str[len(str)-1] != '"' {
 		return errMissingQuotes
 	}
+	return id.UnmarshalText([]byte(str[1 : len(str)-1]))
+}
 
-	lastIndex := len(str) - 1
-	if str[0] != '"' || str[lastIndex] != '"' {
-		return errMissingQuotes
+// UnmarshalText reads the cb58 word ITSELF, unquoted — which is what a
+// TextUnmarshaler is handed, by encoding/json for a map key, by encoding/xml,
+// by flag.Value and by a URL binder. It delegated to UnmarshalJSON, so every
+// one of those callers met "first and last characters should be quotes" for a
+// value that was never JSON. [ID.UnmarshalText] was already corrected this way;
+// this is the same correction on the other two.
+func (id *ShortID) UnmarshalText(text []byte) error {
+	str := string(text)
+	if str == nullStr || str == "" {
+		return nil
 	}
-
-	// Parse CB58 formatted string to bytes
-	bytes, err := cb58.Decode(str[1:lastIndex])
+	bytes, err := cb58.Decode(str)
 	if err != nil {
 		return fmt.Errorf("couldn't decode ID to bytes: %w", err)
 	}
 	*id, err = ToShortID(bytes)
 	return err
-}
-
-func (id *ShortID) UnmarshalText(text []byte) error {
-	return id.UnmarshalJSON(text)
 }
 
 // Bytes returns the 20 byte hash as a slice. It is assumed this slice is not

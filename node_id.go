@@ -42,26 +42,37 @@ func (id NodeID) MarshalText() ([]byte, error) {
 	return []byte(id.String()), nil
 }
 
+// UnmarshalJSON reads the same prefixed word, quoted. The reading itself is in
+// UnmarshalText and is not written twice.
 func (id *NodeID) UnmarshalJSON(b []byte) error {
 	str := string(b)
 	if str == nullStr { // If "null", do nothing
 		return nil
-	} else if len(str) <= 2+len(NodeIDPrefix) {
-		return fmt.Errorf("%w: expected to be > %d", errShortNodeID, 2+len(NodeIDPrefix))
 	}
-
-	lastIndex := len(str) - 1
-	if str[0] != '"' || str[lastIndex] != '"' {
+	if len(str) < 2 || str[0] != '"' || str[len(str)-1] != '"' {
 		return errMissingQuotes
 	}
-
-	var err error
-	*id, err = NodeIDFromString(str[1:lastIndex])
-	return err
+	return id.UnmarshalText([]byte(str[1 : len(str)-1]))
 }
 
+// UnmarshalText reads the prefixed word ITSELF, unquoted — which is what a
+// TextUnmarshaler is handed, by encoding/json for a map key, by encoding/xml,
+// by flag.Value and by a URL binder. It delegated to UnmarshalJSON, so every
+// one of those callers met "first and last characters should be quotes" for a
+// value that was never JSON, and a node id named in a URL arrived as the zero
+// node. [ID.UnmarshalText] was already corrected this way; this is the same
+// correction on the other two.
 func (id *NodeID) UnmarshalText(text []byte) error {
-	return id.UnmarshalJSON(text)
+	str := string(text)
+	if str == nullStr || str == "" {
+		return nil
+	}
+	if len(str) <= len(NodeIDPrefix) {
+		return fmt.Errorf("%w: expected to be > %d", errShortNodeID, len(NodeIDPrefix))
+	}
+	var err error
+	*id, err = NodeIDFromString(str)
+	return err
 }
 
 func (id NodeID) Compare(other NodeID) int {
