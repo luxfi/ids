@@ -1,6 +1,6 @@
 module github.com/luxfi/ids
 
-go 1.26.8
+go 1.27.1
 
 require (
 	github.com/luxfi/crypto v1.20.2

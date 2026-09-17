@@ -100,7 +100,6 @@ func TestNodeID_WireDecode_HonorsSchemeByte(t *testing.T) {
 		NodeIDSchemeSecp256k1,
 	}
 	for _, s := range schemes {
-		s := s
 		t.Run(s.String(), func(t *testing.T) {
 			r := require.New(t)
 			id := NodeID{0x01, 0x02, 0x03, 0x04, 0x05}
